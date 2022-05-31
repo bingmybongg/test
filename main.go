@@ -180,12 +180,12 @@ func loadEnvironmentalVariables() {
 	}
 }
 
-func fetchCookies() (*http.Cookie) {
-	resp, err := http.Get("http://www.bbdc.sg/bbdc/b-mainframe.asp")
-	errCheck(err, "Error fetching cookies (sessionID)")
-	sessionID := resp.Cookies()[0]
-	return sessionID
-}
+//func fetchCookies() (*http.Cookie) {
+//	resp, err := http.Get("http://www.bbdc.sg/bbdc/b-mainframe.asp")
+//	errCheck(err, "Error fetching cookies (sessionID)")
+// 	sessionID := resp.Cookies()[0]
+// 	return sessionID
+// }
 
 func paymentForm(slotID string) url.Values {
 	form := url.Values{}
