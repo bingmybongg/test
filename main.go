@@ -53,7 +53,7 @@ func main() {
 		loginForm.Add("txtNRIC", os.Getenv("NRIC"))
 		loginForm.Add("txtPassword", os.Getenv("PASSWORD"))
 		loginForm.Add("btnLogin", " ")
-		req, err := http.NewRequest("POST", "http://www.bbdc.sg/bbdc/bbdc_web/header2.asp",
+		req, err := http.NewRequest("POST", "http://www.bbdc.sg/",
 			strings.NewReader(loginForm.Encode()))
 		errCheck(err, "Error creating log in request")
 		//req.AddCookie(aspxanon)
