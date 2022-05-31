@@ -181,7 +181,7 @@ func loadEnvironmentalVariables() {
 }
 
 func fetchCookies() (*http.Cookie) {
-	resp, err := http.Get("http://www.bbdc.sg/bbdc/bbdc_web/newheader.asp")
+	resp, err := http.Get("http://www.bbdc.sg/bbdc/b-selectCourse.asp")
 	errCheck(err, "Error fetching cookies (sessionID)")
 	sessionID := resp.Cookies()[0]
 	return sessionID
