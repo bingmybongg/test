@@ -68,14 +68,14 @@ func main() {
 		req, err = http.NewRequest("POST", "http://www.bbdc.sg/bbdc/b-3c-pLessonBooking1.asp",
 			strings.NewReader(bookingForm().Encode()))
 		//req.AddCookie(aspxanon)
-		req.AddCookie(sessionID)
-		req.AddCookie(&http.Cookie{Name: "language", Value: "en-US"})
-		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		errCheck(err, "Error creating get bookings request")
-		resp, err := client.Do(req)
-		errCheck(err, "Error fetching booking slots")
-		body, _ := ioutil.ReadAll(resp.Body)
-		ioutil.WriteFile("booking.txt", body, 0644)
+		// req.AddCookie(sessionID)
+		// req.AddCookie(&http.Cookie{Name: "language", Value: "en-US"})
+		// req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		 // errCheck(err, "Error creating get bookings request")
+		// resp, err := client.Do(req)
+		// errCheck(err, "Error fetching booking slots")
+		// body, _ := ioutil.ReadAll(resp.Body)
+		// ioutil.WriteFile("booking.txt", body, 0644)
 
 		//parse booking page to get booking dates
 		//The data is hidden away in the following function call in the HTML page
