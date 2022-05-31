@@ -1,3 +1,100 @@
+Skip to content
+Search or jump to…
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@bingmybongg 
+bingmybongg
+/
+test
+Public
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+Insights
+Settings
+Add files via upload
+ main
+@bingmybongg
+bingmybongg committed 3 hours ago 
+1 parent c4fa03c commit d4f910761c5f9a1c7b7cef15b92ec296a83367e5
+
+Showing 6 changed files with 275 additions and 1 deletion.
+Filter changed files
+ 24  
+.gitignore
+@@ -0,0 +1,24 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+#environment variables
+.env
+
+#test coverage
+fmt
+
+#Linux binary
+bbdcbot
+
+#logs
+*.txt 
+ 4  
+README.md
+@@ -1 +1,3 @@
+# test
+# bbdc-bot
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/2gavy/bbdcbot)
+ 7  
+app.json
+@@ -0,0 +1,7 @@
+{
+  "name": "Automated Bukit Batok Driving Centre (BBDC) Booking System Bot",
+  "description": "Bot that periodically checks BBDC website for a pre-defined slot and alerts you through Telegram when it becomes available.",
+  "repository": "https://github.com/2gavy/bbdc-bot",
+  "logo": "https://www.bbdc.sg/bbweb/Portals/0/logo.jpg",
+  "keywords": ["go"]
+}
+ 9  
+go.mod
+@@ -0,0 +1,9 @@
+module github.com/SKAshwin/bbdcbot
+
+require (
+	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
+	github.com/joho/godotenv v1.3.0
+	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
+)
+
+go 1.13
+ 6  
+go.sum
+@@ -0,0 +1,6 @@
+github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible h1:2cauKuaELYAEARXRkq2LrJ0yDDv1rW7+wrTEdVL3uaU=
+github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible/go.mod h1:qf9acutJ8cwBUhm1bqgz6Bei9/C/c93FPDljKWwsOgM=
+github.com/joho/godotenv v1.3.0 h1:Zjp+RcGpHhGlrMbJzXTrZZPrWj+1vfm90La1wgB6Bhc=
+github.com/joho/godotenv v1.3.0/go.mod h1:7hK45KPybAkOC6peb+G5yklZfMxEjkZhHbwpqxOKXbg=
+github.com/technoweenie/multipartstreamer v1.0.1 h1:XRztA5MXiR1TIRHxH2uNxXxaIkKQDeX7m2XsSOlQEnM=
+github.com/technoweenie/multipartstreamer v1.0.1/go.mod h1:jNVxdtShOxzAsukZwTSw6MDx5eUJoiEBsSvzDU9uzog=
+ 226  
+main.go
+@@ -0,0 +1,226 @@
 package main
 
 import (
@@ -53,7 +150,7 @@ func main() {
 		loginForm.Add("txtNRIC", os.Getenv("NRIC"))
 		loginForm.Add("txtPassword", os.Getenv("PASSWORD"))
 		loginForm.Add("btnLogin", " ")
-		req, err := http.NewRequest("POST", "http://www.bbdc.sg/",
+		req, err := http.NewRequest("POST", "http://www.bbdc.sg/bbdc/bbdc_web/header2.asp",
 			strings.NewReader(loginForm.Encode()))
 		errCheck(err, "Error creating log in request")
 		//req.AddCookie(aspxanon)
@@ -68,14 +165,14 @@ func main() {
 		req, err = http.NewRequest("POST", "http://www.bbdc.sg/bbdc/b-3c-pLessonBooking1.asp",
 			strings.NewReader(bookingForm().Encode()))
 		//req.AddCookie(aspxanon)
-		// req.AddCookie(sessionID)
-		// req.AddCookie(&http.Cookie{Name: "language", Value: "en-US"})
-		// req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		 // errCheck(err, "Error creating get bookings request")
-		// resp, err := client.Do(req)
-		// errCheck(err, "Error fetching booking slots")
-		// body, _ := ioutil.ReadAll(resp.Body)
-		// ioutil.WriteFile("booking.txt", body, 0644)
+		req.AddCookie(sessionID)
+		req.AddCookie(&http.Cookie{Name: "language", Value: "en-US"})
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		errCheck(err, "Error creating get bookings request")
+		resp, err := client.Do(req)
+		errCheck(err, "Error fetching booking slots")
+		body, _ := ioutil.ReadAll(resp.Body)
+		ioutil.WriteFile("booking.txt", body, 0644)
 
 		//parse booking page to get booking dates
 		//The data is hidden away in the following function call in the HTML page
@@ -180,12 +277,12 @@ func loadEnvironmentalVariables() {
 	}
 }
 
-//func fetchCookies() (*http.Cookie) {
-//	resp, err := http.Get("http://www.bbdc.sg/bbdc/b-mainframe.asp")
-//	errCheck(err, "Error fetching cookies (sessionID)")
-// 	sessionID := resp.Cookies()[0]
-// 	return sessionID
-// }
+func fetchCookies() (*http.Cookie) {
+	resp, err := http.Get("http://www.bbdc.sg/bbdc/bbdc_web/newheader.asp")
+	errCheck(err, "Error fetching cookies (sessionID)")
+	sessionID := resp.Cookies()[0]
+	return sessionID
+}
 
 func paymentForm(slotID string) url.Values {
 	form := url.Values{}
